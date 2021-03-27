@@ -1,24 +1,31 @@
 <template>
   <div class="home">
+    <warning-window v-model="warningWindow" :show="showWarningWindow" />
     <img alt="Vue logo" src="../assets/logo.png" />
     <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import HelloWorld from "@/components/HelloWorld.vue";
 import WarningWindow from "@/components/WarningWindow.vue";
-import WarningWindowVue from '@/components/WarningWindow.vue';
+import { ref } from "vue";
+
+const warningWindow: typeof WarningWindow = WarningWindow;
+const showWarningWindow = ref<boolean>(true);
 
 export default {
+  setup() {
+    console.log(warningWindow);
+    return {
+      warningWindow,
+      showWarningWindow,
+    };
+  },
   components: {
     HelloWorld,
     // eslint-disable-next-line vue/no-unused-components
     WarningWindow,
   },
-  setup() {
-    
-  }
 };
 </script>

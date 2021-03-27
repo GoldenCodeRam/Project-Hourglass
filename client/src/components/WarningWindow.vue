@@ -1,21 +1,55 @@
 <template>
-  <div>
-    <div class="container">
-      <button class="exit-button">
-        <i class="fas fa-times" />
-      </button>
-      <p class="warning-title">Warning Window</p>
-      <p class="warning-message">You'll have to be careful with that buddy...</p>
-      <div class="button-container">
-        <button class="option yes">OK</button>
-        <button class="option no">NO</button>
-      </div>
+  <div class="container" id="container">
+    <button class="exit-button">
+      <i class="fas fa-times" />
+    </button>
+    <p class="warning-title">Warning Window</p>
+    <p class="warning-message">You'll have to be careful with that buddy...</p>
+    <div class="button-container">
+      <button class="option yes">OK</button>
+      <button class="option no">NO</button>
     </div>
   </div>
 </template>
 
-<script>
-export default {};
+<script lang="ts">
+export default {
+  props: {
+    show: Boolean,
+  },
+  mounted() {
+    function dragElement(element: HTMLDivElement) {
+      var posx1: number, posy1: number, posx2: number, posy2: number;
+
+      element.onmousedown = dragMouseDown;
+
+      function dragMouseDown(event: MouseEvent) {
+        posx2 = event.clientX;
+        posy2 = event.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+      }
+
+      function elementDrag(event: MouseEvent) {
+        event = event || window.event;
+        posx1 = posx2 - event.clientX;
+        posy1 = posy2 - event.clientY;
+        posx2 = event.clientX;
+        posy2 = event.clientY;
+
+        element.style.left = element.offsetLeft - posx1 + "px";
+        element.style.top = element.offsetTop - posy1 + "px";
+      }
+
+      function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+    }
+
+    dragElement(document.getElementById("container") as HTMLDivElement);
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -26,7 +60,12 @@ div.container {
   display: inline-block;
   position: absolute;
 
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   padding: 0em 0.5em;
+  margin: auto auto;
+  width: 20em;
   border: 0.3em solid $warning-border;
   box-shadow: 3px 3px 3px 0.1px $warning-shadow,
     inset 0 0 0 0.2em $warning-inset;
@@ -34,6 +73,9 @@ div.container {
   background: $warning-background;
 }
 
+p {
+  user-select: none;
+}
 p.warning-title {
   background: repeating-linear-gradient(
     135deg,
@@ -50,7 +92,6 @@ p.warning-message {
   background: $warning-message-background;
   padding: 1em 1.5em;
   border: 0.2em solid $warning-border;
-  max-width: 20em;
   margin: 1em auto;
   font-size: 10pt;
   border-radius: 5px;
