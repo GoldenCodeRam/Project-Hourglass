@@ -17,8 +17,5 @@ export default {
     // eslint-disable-next-line vue/no-unused-components
     WarningWindow,
   },
-  setup() {
-    
-  }
 };
 </script>
