@@ -1,6 +1,11 @@
 <template>
   <div class="home">
-    <warning-window v-model="warningWindow" :show="showWarningWindow" />
+    <warning-window
+      v-if="showWarningWindow"
+      @hide-warning-window="showWarningWindow = false"
+    />
+    <clock />
+    <button @click="showWarningWindow = true">Show element</button>
     <img alt="Vue logo" src="../assets/logo.png" />
     <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
   </div>
@@ -9,23 +14,21 @@
 <script lang="ts">
 import HelloWorld from "@/components/HelloWorld.vue";
 import WarningWindow from "@/components/WarningWindow.vue";
+import Clock from "@/components/Clock.vue";
 import { ref } from "vue";
 
-const warningWindow: typeof WarningWindow = WarningWindow;
 const showWarningWindow = ref<boolean>(true);
 
 export default {
   setup() {
-    console.log(warningWindow);
     return {
-      warningWindow,
       showWarningWindow,
     };
   },
   components: {
     HelloWorld,
-    // eslint-disable-next-line vue/no-unused-components
     WarningWindow,
+    Clock,
   },
 };
 </script>

@@ -1,23 +1,28 @@
 <template>
-  <div class="container" id="container">
-    <button class="exit-button">
-      <i class="fas fa-times" />
-    </button>
-    <p class="warning-title">Warning Window</p>
-    <p class="warning-message">You'll have to be careful with that buddy...</p>
-    <div class="button-container">
-      <button class="option yes">OK</button>
-      <button class="option no">NO</button>
+  <div class="background">
+    <div class="container" id="container">
+      <button class="exit-button" @click="hideWarning">
+        <i class="fas fa-times" />
+      </button>
+      <p class="warning-title">Warning Window</p>
+      <p class="warning-message">You'll have to be careful with that buddy...</p>
+      <div class="button-container">
+        <button class="option yes">OK</button>
+        <button class="option no" @click="hideWarning">NO</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 export default {
-  props: {
-    show: Boolean,
+  emits: ["hide-warning-window"],
+  methods: {
+    hideWarning(): void {
+      this.$emit("hide-warning-window");
+    },
   },
-  mounted() {
+  mounted(): void {
     function dragElement(element: HTMLDivElement) {
       var posx1: number, posy1: number, posx2: number, posy2: number;
 
@@ -53,9 +58,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import url("https://fonts.googleapis.com/css2?family=Rubik&display=swap");
 @import "./colors.scss";
 
+div.background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: $background;
+  z-index: 100;
+}
 div.container {
   display: inline-block;
   position: absolute;
