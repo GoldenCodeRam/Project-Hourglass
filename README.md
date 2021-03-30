@@ -2,7 +2,7 @@
 
 The project will center on the clock synchronization of multiple servers on a cluster of servers, using the [Berkeley algoritm](https://en.wikipedia.org/wiki/Berkeley_algorithm).
 
-## [Client 🧔🔗](https://github.com/HeizRaum/Project-Hourglass/tree/master/client)
+## [Client 🧔🔗](https://github.com/HeizRaum/Project-Hourglass/tree/master/clockServer/client)
 
 Each client will show the clock in a format `hh:mm:ss`, and each client (tied to a server) will have its own hour.
 
@@ -18,7 +18,7 @@ Each client will show the clock in a format `hh:mm:ss`, and each client (tied to
 ### Polish ✨
 * [ ] Show an error or success message when something has changed from the server to the client.
 
-## [Server 🤖🔗](https://github.com/HeizRaum/Project-Hourglass/tree/master/server)
+## [Server 🤖🔗](https://github.com/HeizRaum/Project-Hourglass/tree/master/clockServer/server)
 
 Each server will be launched as a Docker container, and each server will have its own hour, generated at random from the hour of launch. As it can be seen, the server and the
 client will be tied to the same container.
