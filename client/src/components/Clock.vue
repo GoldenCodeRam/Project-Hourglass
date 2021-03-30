@@ -103,12 +103,13 @@ export default {
       }
       .hand.minute-hand {
         width: 35%;
-        height: 3px;
+        height: 4px;
         z-index: 5;
       }
       .hand.second-hand {
         background: $warning-border;
         width: 45%;
+        height: 2px;
       }
     }
     .inner-clock-face::before {
@@ -119,7 +120,7 @@ export default {
       width: 16px;
       height: 16px;
       border-radius: 18px;
-      background: $warning-border;
+      background: $panel-border;
       transform: translate(-50%, -50%);
       z-index: 6;
     }
@@ -134,13 +135,13 @@ export default {
     content: "";
     width: 6px;
     height: 100%;
-    background: $marker-border;
+    background: $panel-border;
     z-index: 0;
     left: 48%;
   }
 
   .outer-clock-face .marking {
-    background: $marker-border;
+    background: $panel-inset;
     width: 3px;
   }
 
