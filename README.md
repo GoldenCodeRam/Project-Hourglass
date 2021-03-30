@@ -39,3 +39,7 @@ The coordinator will handle the information of the status of the servers. The co
 * [ ] Get the current hour of all of the connected servers.
 * [ ] Use the [Berkeley algoritm](https://en.wikipedia.org/wiki/Berkeley_algorithm) every 2 minutes or so.
 * [ ] Send the new hour to all of the connected servers.
+
+## Diagrams
+### Main diagram
+![mainDiagram](https://github.com/HeizRaum/Project-Hourglass/blob/master/diagrams/diagram.svg)
