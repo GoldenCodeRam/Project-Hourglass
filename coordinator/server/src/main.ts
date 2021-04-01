@@ -1,8 +1,12 @@
 import express from "express";
 import http from "http";
 import socketIo from "socket.io";
+import createLogger from "logging";
 
 import { Coordinator } from "./ConnectionConstants";
+import ServerManager from "./ServerManager";
+
+const logger = createLogger("Main Server 💻");
 
 const app = express();
 const httpServer = new http.Server(app);
@@ -22,5 +26,8 @@ io.on("connection", (socket) => {
 });
 
 httpServer.listen(Coordinator.port, () => {
-  console.log(`Listening on port ${Coordinator.port}`);
+  console.clear();
+  logger.info(`Listening on port ${Coordinator.port}.`);
+  const serverManager = new ServerManager();
 });
+
