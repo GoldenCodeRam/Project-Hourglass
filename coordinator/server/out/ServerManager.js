@@ -42,30 +42,72 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __importDefault(require("util"));
 var logging_1 = __importDefault(require("logging"));
 var child_process_1 = __importDefault(require("child_process"));
+var ServerInformation_1 = require("./interfaces/ServerInformation");
 var logger = logging_1.default("Server Manager 🔧");
 var execPromise = util_1.default.promisify(child_process_1.default.exec);
 var ServerManager = /** @class */ (function () {
     function ServerManager() {
-        this.getRunningServers();
+        var _this = this;
+        this._serverInformationList = new Array();
+        this.getRunningServers().then(function (information) {
+            _this.getAvailablePort();
+        });
     }
     ServerManager.prototype.getRunningServers = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var runningServers, _a, stdout, stderr;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var runningServers, stdout, runningServersInformation;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         logger.info("Getting running servers from Docker.");
                         console.group();
                         runningServers = new Array();
                         return [4 /*yield*/, execPromise("bash ./src/scripts/getRunningServers.sh")];
                     case 1:
-                        _a = _b.sent(), stdout = _a.stdout, stderr = _a.stderr;
-                        logger.info(stdout, stderr);
+                        stdout = (_a.sent()).stdout;
+                        runningServersInformation = JSON.parse(stdout);
+                        runningServersInformation.forEach(function (information) {
+                            _this._serverInformationList.push({
+                                serverName: information.serverName,
+                                clientPort: information.clientPort,
+                                serverPort: information.serverPort,
+                                serverResponseCode: 500,
+                            });
+                        });
+                        logger.info("Running servers:");
+                        logger.info(this._serverInformationList);
                         console.groupEnd();
                         return [2 /*return*/, runningServers];
                 }
             });
         });
+    };
+    ServerManager.prototype.getAvailablePort = function () {
+        logger.info("Getting an available port for a new server.");
+        console.group();
+        var occupiedPorts = [];
+        var pendientPort = -1;
+        this._serverInformationList.forEach(function (information) {
+            occupiedPorts.push(information.serverPort);
+        });
+        // Increase i by 2 to take only the server ports, the client port is always the server port + 1
+        for (var i = 0; i + ServerInformation_1.BASE_SERVER_PORT < ServerInformation_1.BASE_SERVER_PORT + ServerInformation_1.MAX_SERVER_INSTANCES; i += 2) {
+            pendientPort = i + ServerInformation_1.BASE_SERVER_PORT;
+            occupiedPorts.forEach(function (port) {
+                if (port === pendientPort) {
+                    pendientPort = -1;
+                }
+            });
+            if (pendientPort != -1) {
+                logger.info("Available port for server found: ", pendientPort);
+                console.groupEnd();
+                return pendientPort;
+            }
+        }
+        logger.error("There's no available port for a new server!");
+        console.groupEnd();
+        return pendientPort;
     };
     return ServerManager;
 }());

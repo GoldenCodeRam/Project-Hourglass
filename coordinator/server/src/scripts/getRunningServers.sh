@@ -14,11 +14,12 @@ RESULT="["
 for ((i = 0; i < ${#ARRAY[@]}; i += 3));
 do
   RESULT+="{"
-  RESULT+="name:\"${ARRAY[i]}\","
-  RESULT+="serverPort:${ARRAY[i+1]},"
-  RESULT+="clientPort:${ARRAY[i+2]}"
+  RESULT+="\"serverName\":\"${ARRAY[i]}\","
+  RESULT+="\"serverPort\":${ARRAY[i+1]},"
+  RESULT+="\"clientPort\":${ARRAY[i+2]}"
   RESULT+="},"
 done
+RESULT="${RESULT%,*}"
 RESULT+="]"
 
 echo $RESULT
