@@ -9,11 +9,12 @@ Each client will show the clock in a format `hh:mm:ss`, and each client (tied to
 ### Basic functionality
 * [x] Show a *cute* clock that is tied to the hour of the server.
 * [x] Set a button or input for the client to change the hour of the server.
-* [x] Tie the client with the server
+* [x] Tie the client with the server.
   * [x] Connect client to server using Websockets.
-  * [x] Read information from the server: `Date`
+  * [x] Read information from the server: `Date`.
   * [x] Store the information read from the server in a table.
   * [x] Store the information when the client changes the hour.
+* [ ] Generate Dockerfile *and maybe docker-compose* files.
 
 ### Polish ✨
 * [ ] Show an error or success message when something has changed from the server to the client.
