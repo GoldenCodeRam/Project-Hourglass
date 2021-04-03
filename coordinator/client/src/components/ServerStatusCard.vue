@@ -1,13 +1,31 @@
 <template>
   <div class="background">
     <div class="container">
-      <p>Server status</p>
+      <p>{{serverName}}</p>
+      <div class="status online" v-if="isServerUp">
+        <i class="fas fa-check-square"></i>
+        <p>Server online</p>
+      </div>
+      <div class="status offline" v-if="!isServerUp">
+        <i class="fas fa-times-square"></i>
+        <p>Server offline</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-export default {};
+export default {
+  props: {
+    serverName: String,
+    isServerUp: Boolean,
+  },
+  setup(props: any) {
+    return {
+
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -16,13 +34,39 @@ export default {};
 .background {
   .container {
     display: inline-block;
-    padding: 0em 0.5em;
+    padding: 1em 1em;
     margin: auto auto;
-    border: 0.3em solid $panel-border;
-    box-shadow: 3px 3px 3px 0.1px $panel-shadow,
-      inset 0 0 0 0.2em $panel-inset;
+    background: $foreground;
     border-radius: 5px;
-    background: $panel-background;
+
+    p {
+      margin: 0em 1em 1em 1em;
+      padding: 0;
+      font-family: "Rubik", sans-serif;
+      font-weight: bold;
+      font-size: 14pt;
+      color: $purple;
+    }
+
+    .status {
+      i {
+        font-size: 32pt;
+      }
+      p {
+        margin: 0;
+        font-size: 12pt;
+      }
+      &.online {
+        i, p {
+          color: $green;
+        }
+      }
+      &.offline {
+        i, p {
+          color: $red;
+        }
+      }
+    }
   }
 }
 </style>

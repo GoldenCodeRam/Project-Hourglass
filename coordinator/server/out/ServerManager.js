@@ -48,15 +48,37 @@ var execPromise = util_1.default.promisify(child_process_1.default.exec);
 var ServerManager = /** @class */ (function () {
     function ServerManager() {
         var _this = this;
-        this._serverInformationList = new Array();
-        this.getRunningServers().then(function (information) {
-            _this.getAvailablePort();
+        this.serverInformationList = new Array();
+        this.getRunningServers().then(function (list) {
+            _this.serverInformationList = list;
         });
     }
+    ServerManager.prototype.createNewServerInstance = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var availablePort, _a, stdout, stderr, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        availablePort = this.getAvailablePort();
+                        if (!(availablePort != -1)) return [3 /*break*/, 3];
+                        logger.warn("Creating new server instance.");
+                        return [4 /*yield*/, execPromise("bash ./src/scripts/createServer.sh " + ServerInformation_1.SERVER_BASE_NAME + availablePort + " " + availablePort)];
+                    case 1:
+                        _a = _c.sent(), stdout = _a.stdout, stderr = _a.stderr;
+                        if (!stdout) return [3 /*break*/, 3];
+                        _b = this;
+                        return [4 /*yield*/, this.getRunningServers()];
+                    case 2:
+                        _b.serverInformationList = _c.sent();
+                        return [2 /*return*/];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
     ServerManager.prototype.getRunningServers = function () {
         return __awaiter(this, void 0, void 0, function () {
             var runningServers, stdout, runningServersInformation;
-            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -68,15 +90,14 @@ var ServerManager = /** @class */ (function () {
                         stdout = (_a.sent()).stdout;
                         runningServersInformation = JSON.parse(stdout);
                         runningServersInformation.forEach(function (information) {
-                            _this._serverInformationList.push({
+                            runningServers.push({
                                 serverName: information.serverName,
                                 clientPort: information.clientPort,
                                 serverPort: information.serverPort,
-                                serverResponseCode: 500,
+                                serverResponseCode: 200,
                             });
                         });
-                        logger.info("Running servers:");
-                        logger.info(this._serverInformationList);
+                        logger.warn("Running servers:", runningServers);
                         console.groupEnd();
                         return [2 /*return*/, runningServers];
                 }
@@ -88,7 +109,7 @@ var ServerManager = /** @class */ (function () {
         console.group();
         var occupiedPorts = [];
         var pendientPort = -1;
-        this._serverInformationList.forEach(function (information) {
+        this.serverInformationList.forEach(function (information) {
             occupiedPorts.push(information.serverPort);
         });
         // Increase i by 2 to take only the server ports, the client port is always the server port + 1
@@ -100,7 +121,7 @@ var ServerManager = /** @class */ (function () {
                 }
             });
             if (pendientPort != -1) {
-                logger.info("Available port for server found: ", pendientPort);
+                logger.warn("Available port for server found: ", pendientPort);
                 console.groupEnd();
                 return pendientPort;
             }

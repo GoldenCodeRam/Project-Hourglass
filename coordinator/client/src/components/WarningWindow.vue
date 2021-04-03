@@ -65,7 +65,7 @@ div.background {
   top: 0;
   width: 100%;
   height: 100%;
-  background: $background;
+  background: $background-25;
   z-index: 100;
 }
 div.container {
@@ -78,87 +78,78 @@ div.container {
   padding: 0em 0.5em;
   margin: auto auto;
   width: 24em;
-  border: 0.3em solid $warning-border;
-  box-shadow: 3px 3px 3px 0.1px $warning-shadow,
-    inset 0 0 0 0.2em $warning-inset;
   border-radius: 5px;
-  background: $warning-background;
-  background-image: radial-gradient($warning-shadow 1px, transparent 1px),
-    radial-gradient($warning-shadow 1px, $warning-background 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 20px 20px;
+  background: $background;
+  box-shadow: 3px 3px 5px $background-50;
 }
 
 p {
   user-select: none;
 }
 p.warning-title {
-  background: repeating-linear-gradient(
-    135deg,
-    $warning-background,
-    $warning-background 10px,
-    $warning-border 10px,
-    $warning-border 20px
-  );
   padding: 0.2em 2em;
-  color: white;
+  color: $yellow;
   font-family: "Rubik", sans-serif;
+  font-weight: bold;
   font-size: 18pt;
 }
 p.warning-message {
-  background: $warning-message-background;
+  background: $background-50;
   padding: 1em 2em;
-  border: 0.2em solid $warning-border;
   margin: 1em auto;
   font-size: 14pt;
   border-radius: 5px;
-  box-shadow: inset 0 0 0 0.2em $warning-inset,
-    inset 0 0 0 0.3em $warning-border;
+  color: $white;
 }
 
 button.exit-button {
   position: absolute;
-  right: 5%;
-  top: -4%;
-  margin: 0;
-  padding: 0.2em 0.4em;
+  right: 0;
+  top: 0;
+  margin: 0.5em;
+  padding: 0.3em 0.6em;
+  background: $background-50;
 
   outline: none;
-  border: 0.2em solid $close-button-border;
-  box-shadow: inset 0 0 0 0.1em $close-button-inset;
-  background: $close-button-background;
+  border: none;
   border-radius: 5px;
 
   i {
-    color: white;
+    color: $red;
   }
 }
+button.exit-button:hover {
+  background: $red-25;
+}
 button.exit-button:active {
-  background: $close-button-active;
+  background: $red-50;
 }
 button.option {
   outline: none;
-  border: 0.2em solid $warning-border;
-  background: $warning-message-background;
+  background: $background-50;
   border-radius: 5px;
   padding: 0.4em 2em;
   font-size: 12pt;
   font-weight: 700;
   font-family: "Rubik", sans-serif;
+  color: $white;
   margin: 0em 0.3em 1em 0.3em;
-  box-shadow: inset 0 0 0 0.2em $warning-message-background,
-    inset 0 0 0 0.3em $warning-border;
 
-  &.yes {
-    box-shadow: inset 0 0 0 0.2em $warning-message-background,
-      inset 0 0 0 0.3em green;
+  outline: none;
+  border: none;
+
+  &.yes:hover {
+    background: $green-25;
   }
-  &.no {
-    box-shadow: inset 0 0 0 0.2em $warning-message-background,
-      inset 0 0 0 0.3em $close-button-border;
+  &.yes:active {
+    background: $green-50;
   }
-}
-button.option:active {
-  background: $warning-message-active;
+
+  &.no:hover {
+    background: $red-25;
+  }
+  &.no:active {
+    background: $red-50;
+  }
 }
 </style>

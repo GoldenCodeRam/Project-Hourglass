@@ -4,16 +4,13 @@
 
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Rubik&display=swap");
+@import "./components/colors.scss";
 html {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: #fff1df;
-  background-image: radial-gradient(#2d363809 1px, transparent 1px),
-    radial-gradient(#2d363809 1px, #ffffff 1px);
-  background-size: 40px 40px;
-  background-position: 0 0, 20px 20px;
+  background-color: $background;
 }
 
 body {

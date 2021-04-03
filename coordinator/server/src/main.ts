@@ -14,20 +14,28 @@ const io = new socketIo.Server(httpServer, {
   cors: { origin: "*" },
 });
 
+const serverManager = new ServerManager();
+
 app.get("/", (request, response) => {
   response.sendStatus(200);
 });
 
 io.on("connection", (socket) => {
-  console.log("New user connected!");
-  socket.on("message", (message) => {
-    console.log(message);
+  logger.info("New user connected, from", socket.handshake.headers.host);
+  socket.emit("serverStatusList", serverManager.serverInformationList);
+
+  socket.on("createServerInstance", () => {
+    logger.info("Create new server instance order from client.");
+    console.group();
+    serverManager.createNewServerInstance().then((value) => {
+      logger.warn("New server instance created!")
+      console.groupEnd();
+    });
   });
 });
 
 httpServer.listen(Coordinator.port, () => {
   console.clear();
   logger.info(`Listening on port ${Coordinator.port}.`);
-  const serverManager = new ServerManager();
 });
 

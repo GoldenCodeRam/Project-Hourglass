@@ -15,17 +15,23 @@ var httpServer = new http_1.default.Server(app);
 var io = new socket_io_1.default.Server(httpServer, {
     cors: { origin: "*" },
 });
+var serverManager = new ServerManager_1.default();
 app.get("/", function (request, response) {
     response.sendStatus(200);
 });
 io.on("connection", function (socket) {
-    console.log("New user connected!");
-    socket.on("message", function (message) {
-        console.log(message);
+    logger.info("New user connected, from", socket.handshake.headers.host);
+    socket.emit("serverStatusList", serverManager.serverInformationList);
+    socket.on("createServerInstance", function () {
+        logger.info("Create new server instance order from client.");
+        console.group();
+        serverManager.createNewServerInstance().then(function (value) {
+            logger.warn("New server instance created!");
+            console.groupEnd();
+        });
     });
 });
 httpServer.listen(ConnectionConstants_1.Coordinator.port, function () {
     console.clear();
     logger.info("Listening on port " + ConnectionConstants_1.Coordinator.port + ".");
-    var serverManager = new ServerManager_1.default();
 });

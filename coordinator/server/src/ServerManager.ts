@@ -2,18 +2,32 @@ import util from "util";
 import createLogger from "logging";
 import exec from "child_process";
 
-import { ServerInformation, BASE_SERVER_PORT, MAX_SERVER_INSTANCES, CLIENT_SERVER_OFFSET } from "./interfaces/ServerInformation";
+import { ServerInformation, BASE_SERVER_PORT, MAX_SERVER_INSTANCES, SERVER_BASE_NAME } from "./interfaces/ServerInformation";
 
 const logger = createLogger("Server Manager 🔧");
 const execPromise = util.promisify(exec.exec);
 
 export default class ServerManager {
-  private _serverInformationList: Array<ServerInformation> = new Array<ServerInformation>();
+  public serverInformationList: Array<ServerInformation> = new Array<ServerInformation>();
 
   constructor() {
-    this.getRunningServers().then((information) => {
-      this.getAvailablePort();
+    this.getRunningServers().then((list) => {
+      this.serverInformationList = list;
     });
+  }
+
+  public async createNewServerInstance(): Promise<void> {
+    const availablePort = this.getAvailablePort();
+    if (availablePort != -1) {
+      logger.warn("Creating new server instance.");
+      const { stdout, stderr } = await execPromise(
+        `bash ./src/scripts/createServer.sh ${SERVER_BASE_NAME}${availablePort} ${availablePort}`
+      );
+      if (stdout) {
+        this.serverInformationList = await this.getRunningServers();
+        return;
+      }
+    }
   }
 
   private async getRunningServers(): Promise<Array<ServerInformation>> {
@@ -23,14 +37,14 @@ export default class ServerManager {
     const { stdout } = await execPromise("bash ./src/scripts/getRunningServers.sh");
     const runningServersInformation = JSON.parse(stdout);
     runningServersInformation.forEach((information: any) => {
-      this._serverInformationList.push({
+      runningServers.push({
         serverName: information.serverName,
         clientPort: information.clientPort,
         serverPort: information.serverPort,
-        serverResponseCode: 500,
+        serverResponseCode: 200,
       })
     });
-    logger.info("Running servers:", this._serverInformationList);
+    logger.warn("Running servers:", runningServers);
     console.groupEnd();
     return runningServers;
   }
@@ -42,7 +56,7 @@ export default class ServerManager {
     const occupiedPorts: Array<number> = [];
     let pendientPort = -1;
 
-    this._serverInformationList.forEach((information) => {
+    this.serverInformationList.forEach((information) => {
       occupiedPorts.push(information.serverPort);
     });
     // Increase i by 2 to take only the server ports, the client port is always the server port + 1
@@ -54,7 +68,7 @@ export default class ServerManager {
         }
       });
       if (pendientPort != -1) {
-        logger.info("Available port for server found: ", pendientPort);
+        logger.warn("Available port for server found: ", pendientPort);
         console.groupEnd();
         return pendientPort;
       }

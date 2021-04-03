@@ -1,6 +1,7 @@
 const BASE_SERVER_PORT = 4000,
-      MAX_SERVER_INSTANCES = 50,
-      CLIENT_SERVER_OFFSET = 1
+      MAX_SERVER_INSTANCES = 50
+
+const SERVER_BASE_NAME = "hourglass-server-"
 
 export interface ServerInformation {
   serverName: string,
@@ -12,5 +13,5 @@ export interface ServerInformation {
 export {
   BASE_SERVER_PORT,
   MAX_SERVER_INSTANCES,
-  CLIENT_SERVER_OFFSET,
+  SERVER_BASE_NAME,
 }
