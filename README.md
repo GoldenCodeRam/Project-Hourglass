@@ -28,6 +28,8 @@ client will be tied to the same container.
 * [x] Start a web socket server and send the information to the client.
 * [x] Send every minute the status of the hour of the server to the client.
 * [x] There will be at least three running instances, in different containers.
+* [ ] Send the current hour of the server to the coordinator.
+* [ ] Add or substract the offset got from the coordinator.
 
 ## [Coordinator 👩‍🍳🔗](https://github.com/HeizRaum/Project-Hourglass/tree/master/coordinator)
 
