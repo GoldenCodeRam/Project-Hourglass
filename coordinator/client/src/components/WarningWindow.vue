@@ -16,10 +16,10 @@
 
 <script lang="ts">
 export default {
-  emits: ['hide-warning-window'],
+  emits: ["hide-window"],
   methods: {
     hideWarning(): void {
-      this.$emit('hide-warning-window');
+      this.$emit("hide-window");
     },
   },
   mounted(): void {
@@ -42,8 +42,8 @@ export default {
         posx2 = event.clientX;
         posy2 = event.clientY;
 
-        element.style.left = element.offsetLeft - posx1 + 'px';
-        element.style.top = element.offsetTop - posy1 + 'px';
+        element.style.left = element.offsetLeft - posx1 + "px";
+        element.style.top = element.offsetTop - posy1 + "px";
       }
 
       function closeDragElement() {
@@ -52,7 +52,7 @@ export default {
       }
     }
 
-    dragElement(document.getElementById('container') as HTMLDivElement);
+    dragElement(document.getElementById("container") as HTMLDivElement);
   },
 };
 </script>
@@ -123,33 +123,5 @@ button.exit-button:hover {
 }
 button.exit-button:active {
   background: $red-50;
-}
-button.option {
-  outline: none;
-  background: $background-50;
-  border-radius: 5px;
-  padding: 0.4em 2em;
-  font-size: 12pt;
-  font-weight: 700;
-  font-family: "Rubik", sans-serif;
-  color: $white;
-  margin: 0em 0.3em 1em 0.3em;
-
-  outline: none;
-  border: none;
-
-  &.yes:hover {
-    background: $green-25;
-  }
-  &.yes:active {
-    background: $green-50;
-  }
-
-  &.no:hover {
-    background: $red-25;
-  }
-  &.no:active {
-    background: $red-50;
-  }
 }
 </style>

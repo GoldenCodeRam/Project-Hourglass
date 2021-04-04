@@ -1,12 +1,10 @@
 import express from "express";
 import http from "http";
 import socketIo from "socket.io";
-import createLogger from "logging";
 
 import { Coordinator } from "./ConnectionConstants";
 import ServerManager from "./ServerManager";
-
-const logger = createLogger("Main Server 💻");
+import { logger } from "./utils/Logger";
 
 const app = express();
 const httpServer = new http.Server(app);
@@ -21,16 +19,20 @@ app.get("/", (request, response) => {
 });
 
 io.on("connection", (socket) => {
-  logger.info("New user connected, from", socket.handshake.headers.host);
+  logger.info(`New user connected, from ${socket.handshake.headers.host}`);
   socket.emit("serverStatusList", serverManager.serverInformationList);
 
   socket.on("createServerInstance", () => {
     logger.info("Create new server instance order from client.");
-    console.group();
-    serverManager.createNewServerInstance().then((value) => {
-      logger.warn("New server instance created!")
-      console.groupEnd();
+    serverManager.createNewServerInstance().then(() => {
+      logger.warn("New server instance created!");
+      socket.emit("serverStatusList", serverManager.serverInformationList);
     });
+  });
+
+  socket.on("synchronizeServerClocks", () => {
+    logger.info("Trying to synchronize all clocks.");
+    serverManager.synchronizeServerClocks();
   });
 });
 

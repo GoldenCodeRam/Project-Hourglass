@@ -10,6 +10,7 @@
         <i class="fas fa-times-square"></i>
         <p>Server offline</p>
       </div>
+      <button class="option yes" @click="goToServer">Go to server 🏃‍♂️</button>
     </div>
   </div>
 </template>
@@ -18,12 +19,17 @@
 export default {
   props: {
     serverName: String,
+    clientPort: Number,
     isServerUp: Boolean,
   },
   setup(props: any) {
-    return {
+    function goToServer() {
+      window.open(`http://localhost:${props.clientPort}`, "_blank");
+    }
 
-    };
+    return {
+      goToServer,
+    }
   },
 };
 </script>
@@ -36,7 +42,7 @@ export default {
     display: inline-block;
     padding: 1em 1em;
     margin: auto auto;
-    background: $foreground;
+    background: $foreground-25;
     border-radius: 5px;
 
     p {
@@ -53,7 +59,7 @@ export default {
         font-size: 32pt;
       }
       p {
-        margin: 0;
+        margin: 0 0 1em 0;
         font-size: 12pt;
       }
       &.online {

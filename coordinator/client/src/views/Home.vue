@@ -12,10 +12,12 @@
         v-for="(information, index) in serverStatusList"
         :key="index"
         :serverName="information.serverName"
+        :clientPort="information.clientPort"
         :isServerUp="information.isServerUp"
       />
     </div>
-    <button @click="createNewServerInstance">Create new server instance</button>
+    <button class="option" @click="createServerInstance">Create new server instance 🐣</button>
+    <button class="option" @click="synchronizeServerClocks">Get all servers current dates ⏱</button>
   </div>
 </template>
 
@@ -33,24 +35,33 @@ export default {
     const serverStatusList = ref<Array<ServerStatus>>([]);
 
     socket.connect().on("serverStatusList", (list) => {
+      serverStatusList.value = [];
       list.forEach((serverStatus: any) => {
         serverStatusList.value.push({
           serverName: serverStatus.serverName,
+          clientPort: serverStatus.clientPort,
           isServerUp: serverStatus.serverResponseCode == 200,
         });
       });
     });
 
-    function createNewServerInstance() {
+    function createServerInstance() {
       if (socket.connected) {
         socket.emit("createServerInstance");
+      }
+    }
+
+    function synchronizeServerClocks() {
+      if (socket.connected) {
+        socket.emit("synchronizeServerClocks");
       }
     }
 
     return {
       showWarningWindow,
       serverStatusList,
-      createNewServerInstance,
+      createServerInstance,
+      synchronizeServerClocks,
     };
   },
   components: {
@@ -81,15 +92,15 @@ p.subtitle {
   font-family: "Rubik", sans-serif;
   font-weight: bold;
   font-size: 14pt;
-  color: $yellow;
+  color: $blue;
   margin: 0;
-  padding: 0em 1em 1em 1em;
+  padding: 0 0 2em 0;
 }
 
 div.cardContainer {
   padding: 1em;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: space-evenly;
 }
 </style>

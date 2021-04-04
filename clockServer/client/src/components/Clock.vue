@@ -12,23 +12,36 @@
       </div>
     </div>
   </div>
-  <p></p>
+  <p class="serverHour">Current server hour</p>
+  <p>
+    {{serverHour.toLocaleTimeString()}}
+  </p>
 </template>
 
 <script lang="ts">
 import { onMounted, Ref, ref } from "vue";
 
 export default {
-  setup(): unknown {
+  props: {
+    date: Date,
+  },
+  watch: {
+    date: function (newDate: Date, _oldDate: Date) {
+      this.serverHour = newDate;
+      this.setDate();
+    },
+  },
+  setup(props: any): any {
+    const serverHour = ref<Date>(props.date);
+
     const hourHand: Ref<HTMLDivElement | null> = ref(null);
     const minuteHand: Ref<HTMLDivElement | null> = ref(null);
     const secondHand: Ref<HTMLDivElement | null> = ref(null);
 
     function setDate() {
-      const now = new Date();
-      const seconds = now.getSeconds();
-      const minutes = now.getMinutes();
-      const hours = now.getHours();
+      const seconds = serverHour.value.getSeconds();
+      const minutes = serverHour.value.getMinutes();
+      const hours = serverHour.value.getHours();
       const secondsDegrees = seconds * 6 + 90;
       const minutesDegrees = minutes * 6 + seconds / 10 + 90;
       const hoursDegrees = hours * 30 + minutes / 2 + 90;
@@ -40,15 +53,12 @@ export default {
       }
     }
 
-    onMounted(() => {
-      setDate();
-      setInterval(setDate, 1000);
-    });
-
     return {
       hourHand,
       minuteHand,
       secondHand,
+      serverHour,
+      setDate
     };
   },
 };
@@ -57,6 +67,18 @@ export default {
 <style lang="scss" scoped>
 @import "./colors.scss";
 
+p.serverHour {
+  margin: 0.5em 0 0 0;
+  font-size: 12pt;
+  color: $yellow;
+}
+p {
+  margin: 0 0 1em 0;
+  color: $white;
+  font-size: 14pt;
+  font-family: "Rubik", sans-serif;
+}
+
 .clock {
   position: relative;
   width: 10rem;
@@ -64,16 +86,14 @@ export default {
   border-radius: 50%;
   margin: auto;
   padding: 0.7rem;
-  background: $panel-border;
-  border: 0.2em solid $panel-border;
-  box-shadow: 3px 3px 3px 0.1px $panel-shadow, inset 0 0 0 0.5em $panel-inset;
+  background: $foreground;
 
   .outer-clock-face {
     position: relative;
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: $panel-background;
+    background: $white;
     overflow: hidden;
 
     .inner-clock-face {
@@ -82,7 +102,7 @@ export default {
       left: 10%;
       width: 80%;
       height: 80%;
-      background: $panel-background;
+      background: $white;
       border-radius: 50%;
       z-index: 1;
 
@@ -92,7 +112,7 @@ export default {
         height: 6px;
         top: 48%;
         right: 50%;
-        background: $marker-border;
+        background: $foreground;
         border-radius: 6px;
         transform-origin: 100%;
         transform: rotate(90deg);
@@ -102,14 +122,15 @@ export default {
         z-index: 3;
       }
       .hand.minute-hand {
-        width: 35%;
+        width: 38%;
         height: 4px;
         z-index: 5;
       }
       .hand.second-hand {
-        background: $warning-border;
+        background: $red;
         width: 45%;
         height: 2px;
+        z-index: 8;
       }
     }
     .inner-clock-face::before {
@@ -120,9 +141,9 @@ export default {
       width: 16px;
       height: 16px;
       border-radius: 18px;
-      background: $panel-border;
+      background: $background;
       transform: translate(-50%, -50%);
-      z-index: 6;
+      z-index: 10;
     }
   }
   .outer-clock-face::after {
@@ -135,14 +156,15 @@ export default {
     content: "";
     width: 6px;
     height: 100%;
-    background: $panel-border;
+    background: $background-50;
     z-index: 0;
     left: 48%;
   }
 
   .outer-clock-face .marking {
-    background: $panel-inset;
+    background: $background-25;
     width: 3px;
+    transition: all 0.1s;
   }
 
   .outer-clock-face .marking.marking-one {

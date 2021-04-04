@@ -1,26 +1,45 @@
 <template>
   <div class="background">
     <div class="container" id="container">
-      <button class="exit-button" @click="hideWarning">
+      <button class="exit-button" @click="hideWindow">
         <i class="fas fa-times" />
       </button>
-      <p class="warning-title">Warning Window</p>
-      <p class="warning-message">This is a warning window</p>
+      <p class="title">Change hour</p>
+      <div class="message">
+        <p>HH:MM:SS</p>
+        <div>
+          <input type="text" maxlength="2" size="2" placeholder="00" v-model="hours"/>
+          <input type="text" maxlength="2" size="2" placeholder="00" v-model="minutes"/>
+          <input type="text" maxlength="2" size="2" placeholder="00" v-model="seconds"/>
+        </div>
+      </div>
+      <p class="buttonWarning">Are you sure you want to change the hour?</p>
       <div class="button-container">
-        <button class="option yes">YES</button>
-        <button class="option no" @click="hideWarning">NO</button>
+        <button class="option yes" @click="setServerHour(hours, minutes, seconds)">YES</button>
+        <button class="option no" @click="hideWindow">NO</button>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import { ref } from '@vue/reactivity';
 export default {
-  emits: ["hide-window"],
+  emits: ["hide-window", "set-server-hour"],
   methods: {
-    hideWarning(): void {
+    hideWindow(): void {
       this.$emit("hide-window");
     },
+    setServerHour(hours: number, minutes: number, seconds: number): void {
+      this.$emit("set-server-hour", hours, minutes, seconds);
+    },
+  },
+  setup() {
+    const hours = ref<number>();
+    const minutes = ref<number>();
+    const seconds = ref<number>();
+
+    return {hours, minutes, seconds};
   },
   mounted(): void {
     function dragElement(element: HTMLDivElement) {
@@ -83,23 +102,44 @@ div.container {
   box-shadow: 3px 3px 5px $background-50;
 }
 
-p {
+div.message {
   user-select: none;
-}
-p.warning-title {
-  padding: 0.2em 2em;
-  color: $yellow;
-  font-family: "Rubik", sans-serif;
-  font-weight: bold;
-  font-size: 18pt;
-}
-p.warning-message {
+  display: flex;
+  flex-direction: column;
   background: $background-50;
   padding: 1em 2em;
   margin: 1em auto;
-  font-size: 14pt;
   border-radius: 5px;
-  color: $white;
+  justify-content: center;
+
+  p {
+    font-family: "Rubik", sans-serif;
+    font-weight: bold;
+    margin: 0 0 0.3em 0;
+    color: $blue;
+  }
+
+  input {
+    background: $foreground;
+    margin: 0 0.2em;
+    font-family: "Rubik", sans-serif;
+    padding: 1em;
+    text-align: center;
+    color: $white;
+    border: none;
+    outline: none;
+  }
+}
+p.buttonWarning {
+  margin: 0.5em;
+  color: $white-50;
+}
+p.title {
+  padding: 0.2em 2em;
+  color: $cyan;
+  font-family: "Rubik", sans-serif;
+  font-weight: bold;
+  font-size: 18pt;
 }
 
 button.exit-button {

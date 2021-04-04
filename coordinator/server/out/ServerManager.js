@@ -40,38 +40,89 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __importDefault(require("util"));
-var logging_1 = __importDefault(require("logging"));
 var child_process_1 = __importDefault(require("child_process"));
+var axios_1 = __importDefault(require("axios"));
 var ServerInformation_1 = require("./interfaces/ServerInformation");
-var logger = logging_1.default("Server Manager 🔧");
+var Logger_1 = require("./utils/Logger");
+var Clock_1 = __importDefault(require("./utils/Clock"));
 var execPromise = util_1.default.promisify(child_process_1.default.exec);
 var ServerManager = /** @class */ (function () {
     function ServerManager() {
         var _this = this;
         this.serverInformationList = new Array();
+        this._serverClock = new Clock_1.default();
         this.getRunningServers().then(function (list) {
             _this.serverInformationList = list;
         });
     }
     ServerManager.prototype.createNewServerInstance = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var availablePort, _a, stdout, stderr, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var availablePort, stdout, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         availablePort = this.getAvailablePort();
                         if (!(availablePort != -1)) return [3 /*break*/, 3];
-                        logger.warn("Creating new server instance.");
+                        Logger_1.serverManagerLogger.warn("Creating new server instance.");
                         return [4 /*yield*/, execPromise("bash ./src/scripts/createServer.sh " + ServerInformation_1.SERVER_BASE_NAME + availablePort + " " + availablePort)];
                     case 1:
-                        _a = _c.sent(), stdout = _a.stdout, stderr = _a.stderr;
+                        stdout = (_b.sent()).stdout;
                         if (!stdout) return [3 /*break*/, 3];
-                        _b = this;
+                        _a = this;
                         return [4 /*yield*/, this.getRunningServers()];
                     case 2:
-                        _b.serverInformationList = _c.sent();
+                        _a.serverInformationList = _b.sent();
                         return [2 /*return*/];
                     case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ServerManager.prototype.synchronizeServerClocks = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var serverOffsets, totalTimeDifference, averageTimeDifference, _i, _a, information, response, _b, _c, information, timeDifference;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        serverOffsets = [];
+                        totalTimeDifference = 0;
+                        averageTimeDifference = 0;
+                        _i = 0, _a = this.serverInformationList;
+                        _d.label = 1;
+                    case 1:
+                        if (!(_i < _a.length)) return [3 /*break*/, 4];
+                        information = _a[_i];
+                        return [4 /*yield*/, axios_1.default.post("http://localhost:" + information.serverPort + "/offsetServerHour/", {
+                                serverDate: this._serverClock.date,
+                            })];
+                    case 2:
+                        response = _d.sent();
+                        if (response.data) {
+                            totalTimeDifference += response.data.offsetDate;
+                            serverOffsets.push(response.data.offsetDate);
+                        }
+                        _d.label = 3;
+                    case 3:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 4:
+                        averageTimeDifference = totalTimeDifference / (this.serverInformationList.length + 1);
+                        _b = 0, _c = this.serverInformationList;
+                        _d.label = 5;
+                    case 5:
+                        if (!(_b < _c.length)) return [3 /*break*/, 8];
+                        information = _c[_b];
+                        timeDifference = averageTimeDifference - serverOffsets[this.serverInformationList.indexOf(information)];
+                        return [4 /*yield*/, axios_1.default.post("http://localhost:" + information.serverPort + "/setServerHourOffset/", {
+                                timeDifference: timeDifference,
+                            })];
+                    case 6:
+                        _d.sent();
+                        _d.label = 7;
+                    case 7:
+                        _b++;
+                        return [3 /*break*/, 5];
+                    case 8: return [2 /*return*/];
                 }
             });
         });
@@ -82,7 +133,7 @@ var ServerManager = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        logger.info("Getting running servers from Docker.");
+                        Logger_1.serverManagerLogger.info("Getting running servers from Docker.");
                         console.group();
                         runningServers = new Array();
                         return [4 /*yield*/, execPromise("bash ./src/scripts/getRunningServers.sh")];
@@ -97,7 +148,7 @@ var ServerManager = /** @class */ (function () {
                                 serverResponseCode: 200,
                             });
                         });
-                        logger.warn("Running servers:", runningServers);
+                        Logger_1.serverManagerLogger.warn("Running servers: " + runningServers.length);
                         console.groupEnd();
                         return [2 /*return*/, runningServers];
                 }
@@ -105,7 +156,7 @@ var ServerManager = /** @class */ (function () {
         });
     };
     ServerManager.prototype.getAvailablePort = function () {
-        logger.info("Getting an available port for a new server.");
+        Logger_1.serverManagerLogger.info("Getting an available port for a new server.");
         console.group();
         var occupiedPorts = [];
         var pendientPort = -1;
@@ -121,12 +172,12 @@ var ServerManager = /** @class */ (function () {
                 }
             });
             if (pendientPort != -1) {
-                logger.warn("Available port for server found: ", pendientPort);
+                Logger_1.serverManagerLogger.warn("Available port for server found: " + pendientPort);
                 console.groupEnd();
                 return pendientPort;
             }
         }
-        logger.error("There's no available port for a new server!");
+        Logger_1.serverManagerLogger.error("There's no available port for a new server!");
         console.groupEnd();
         return pendientPort;
     };

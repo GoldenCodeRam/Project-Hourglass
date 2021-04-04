@@ -1,14 +1,17 @@
 import util from "util";
-import createLogger from "logging";
 import exec from "child_process";
+import axios from "axios";
 
 import { ServerInformation, BASE_SERVER_PORT, MAX_SERVER_INSTANCES, SERVER_BASE_NAME } from "./interfaces/ServerInformation";
+import { serverManagerLogger as logger } from "./utils/Logger";
+import Clock from "./utils/Clock";
 
-const logger = createLogger("Server Manager 🔧");
 const execPromise = util.promisify(exec.exec);
 
 export default class ServerManager {
   public serverInformationList: Array<ServerInformation> = new Array<ServerInformation>();
+
+  private _serverClock = new Clock();
 
   constructor() {
     this.getRunningServers().then((list) => {
@@ -20,13 +23,38 @@ export default class ServerManager {
     const availablePort = this.getAvailablePort();
     if (availablePort != -1) {
       logger.warn("Creating new server instance.");
-      const { stdout, stderr } = await execPromise(
+      const { stdout } = await execPromise(
         `bash ./src/scripts/createServer.sh ${SERVER_BASE_NAME}${availablePort} ${availablePort}`
       );
       if (stdout) {
         this.serverInformationList = await this.getRunningServers();
         return;
       }
+    }
+  }
+
+  public async synchronizeServerClocks(): Promise<void> {
+    const serverOffsets: Array<number> = [];
+    let totalTimeDifference = 0;
+    let averageTimeDifference = 0;
+
+    for (const information of this.serverInformationList) {
+      const response = await axios.post(`http://localhost:${information.serverPort}/offsetServerHour/`, {
+        serverDate: this._serverClock.date,
+      });
+      if (response.data) {
+        totalTimeDifference += response.data.offsetDate;
+        serverOffsets.push(response.data.offsetDate);
+      }
+    }
+
+    averageTimeDifference = totalTimeDifference / (this.serverInformationList.length + 1);
+
+    for (const information of this.serverInformationList) {
+      const timeDifference = averageTimeDifference - serverOffsets[this.serverInformationList.indexOf(information)];
+      await axios.post(`http://localhost:${information.serverPort}/setServerHourOffset/`, {
+        timeDifference: timeDifference,
+      });
     }
   }
 
@@ -44,7 +72,7 @@ export default class ServerManager {
         serverResponseCode: 200,
       })
     });
-    logger.warn("Running servers:", runningServers);
+    logger.warn(`Running servers: ${runningServers.length}`);
     console.groupEnd();
     return runningServers;
   }
@@ -68,7 +96,7 @@ export default class ServerManager {
         }
       });
       if (pendientPort != -1) {
-        logger.warn("Available port for server found: ", pendientPort);
+        logger.warn(`Available port for server found: ${pendientPort}`);
         console.groupEnd();
         return pendientPort;
       }

@@ -1,4 +1,4 @@
-DOCKER_IMAGE_NAME="alpine"
+DOCKER_IMAGE_NAME="heizraum/clock-server-hourglass"
 
 DOCKER_CONTAINERS=$(docker ps --filter "ancestor=$DOCKER_IMAGE_NAME" --format '{{.Names}} {{.Ports}}')
 
