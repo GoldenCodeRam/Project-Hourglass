@@ -28,8 +28,8 @@ client will be tied to the same container.
 * [x] Start a web socket server and send the information to the client.
 * [x] Send every minute the status of the hour of the server to the client.
 * [x] There will be at least three running instances, in different containers.
-* [ ] Send the current hour of the server to the coordinator.
-* [ ] Add or substract the offset got from the coordinator.
+* [x] Send the current hour of the server to the coordinator.
+* [x] Add or substract the offset got from the coordinator.
 
 ## [Coordinator 👩‍🍳🔗](https://github.com/HeizRaum/Project-Hourglass/tree/master/coordinator)
 
@@ -37,11 +37,15 @@ The coordinator will handle the information of the status of the servers. The co
 
 ### Basic functionality
 * [x] Show the amount of live and connected servers.
-* [ ] Get the current time from some API, maybe [this one 🔗.](http://worldtimeapi.org/)
+* [x] Get the current time from some API, maybe [this one 🔗.](http://worldtimeapi.org/)
 * [x] Make the coordinator able to launch new containers.
-* [ ] Get the current hour of all of the connected servers.
-* [ ] Use the [Berkeley algoritm](https://en.wikipedia.org/wiki/Berkeley_algorithm) every 2 minutes or so.
-* [ ] Send the new hour to all of the connected servers.
+* [x] Get the current hour of all of the connected servers.
+* [x] Use the [Berkeley algoritm](https://en.wikipedia.org/wiki/Berkeley_algorithm) every 2 minutes or so.
+* [x] Send the new hour to all of the connected servers.
+
+### Polish ✨
+* [ ] Add a [Swagger 🔗](https://swagger.io/) HTTP API Document page.
+* [ ] Add an [Asyncapi 🔗](https://www.asyncapi.com/) Websocket API Document page.
 
 ## Diagrams
 ### Main diagram
