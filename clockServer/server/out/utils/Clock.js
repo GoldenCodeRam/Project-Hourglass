@@ -4,12 +4,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Clock = /** @class */ (function () {
     function Clock(callback) {
         if (callback === void 0) { callback = undefined; }
-        this.date = new Date();
+        // Initialize server clock with the offset of Bogotá, Colombia
+        this.date = new Date(Date.now());
         this.callback = callback;
         this.startClock();
     }
-    Clock.prototype.offsetDate = function (dateString) {
-        return new Date(dateString).valueOf() - this.date.valueOf();
+    Clock.prototype.offsetDate = function (unixTime) {
+        console.log(unixTime);
+        console.log("Getting the date offset for", this.date.valueOf(), unixTime - this.date.valueOf());
+        return unixTime - this.date.valueOf();
     };
     Clock.prototype.startClock = function () {
         this.advanceClock();

@@ -4,13 +4,16 @@ export default class Clock {
   public callback: Function | undefined;
   
   constructor(callback: Function | undefined = undefined) {
-    this.date = new Date();
+    // Initialize server clock with the offset of Bogotá, Colombia
+    this.date = new Date(Date.now());
     this.callback = callback;
     this.startClock();
   }
 
-  public offsetDate(dateString: string): number {
-    return new Date(dateString).valueOf() - this.date.valueOf();
+  public offsetDate(unixTime: number): number {
+    console.log(unixTime);
+    console.log("Getting the date offset for", this.date.valueOf(), unixTime - this.date.valueOf());
+    return unixTime - this.date.valueOf();
   }
 
   private startClock() {

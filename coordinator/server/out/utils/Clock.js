@@ -76,8 +76,9 @@ var Clock = /** @class */ (function () {
                     case 1:
                         response = _a.sent();
                         if (response) {
+                            Logger_1.clockLogger.info("Current UTC hour got from the API: " + response.data.utc_datetime);
                             if (response.data)
-                                this.date = new Date(response.data.utc_datetime);
+                                this.date = new Date(response.data.unixtime * 1000);
                         }
                         return [2 /*return*/];
                 }

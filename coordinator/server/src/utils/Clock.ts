@@ -31,7 +31,8 @@ export default class Clock {
       clockLogger.error("Something went wrong with the GET action on the API, trying again...");
     });
     if (response) {
-      if (response.data) this.date = new Date(response.data.utc_datetime);
+      clockLogger.info(`Current UTC hour got from the API: ${response.data.utc_datetime}`);
+      if (response.data) this.date = new Date(response.data.unixtime * 1000);
     }
   }
 }

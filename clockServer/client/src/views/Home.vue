@@ -53,6 +53,10 @@ export default {
     });
     socket.on("serverHourChanged", (offset: number) => {
       console.log(offset);
+      serverHourLogs.value.unshift({
+        hour: serverHour.value,
+        comment: `Server date updated with offset ${offset}`,
+      });
     });
 
     function changeServerHour(hours: number, minutes: number, seconds: number): any {

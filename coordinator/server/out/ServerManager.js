@@ -93,13 +93,14 @@ var ServerManager = /** @class */ (function () {
                         if (!(_i < _a.length)) return [3 /*break*/, 4];
                         information = _a[_i];
                         return [4 /*yield*/, axios_1.default.post("http://localhost:" + information.serverPort + "/offsetServerHour/", {
-                                serverDate: this._serverClock.date,
+                                serverUnixDate: this._serverClock.date.valueOf(),
                             })];
                     case 2:
                         response = _d.sent();
                         if (response.data) {
-                            totalTimeDifference += response.data.offsetDate;
-                            serverOffsets.push(response.data.offsetDate);
+                            console.log("Current offset of the server: ", response.data);
+                            totalTimeDifference += response.data.offsetUnixDate;
+                            serverOffsets.push(response.data.offsetUnixDate);
                         }
                         _d.label = 3;
                     case 3:
@@ -107,12 +108,14 @@ var ServerManager = /** @class */ (function () {
                         return [3 /*break*/, 1];
                     case 4:
                         averageTimeDifference = totalTimeDifference / (this.serverInformationList.length + 1);
+                        console.log("Average time difference of the clocks: ", averageTimeDifference);
                         _b = 0, _c = this.serverInformationList;
                         _d.label = 5;
                     case 5:
                         if (!(_b < _c.length)) return [3 /*break*/, 8];
                         information = _c[_b];
                         timeDifference = averageTimeDifference - serverOffsets[this.serverInformationList.indexOf(information)];
+                        console.log("Time difference to add or remove to the clock server: ", timeDifference);
                         return [4 /*yield*/, axios_1.default.post("http://localhost:" + information.serverPort + "/setServerHourOffset/", {
                                 timeDifference: timeDifference,
                             })];

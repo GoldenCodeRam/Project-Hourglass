@@ -20,17 +20,19 @@ app.get("/", function (_request, response) {
     response.sendStatus(200);
 });
 app.post("/offsetServerHour", function (request, response) {
-    if (request.body.serverDate) {
-        console.log(request.body.serverDate);
-        response.send({ offsetDate: serverClock.offsetDate(request.body.serverDate) });
+    if (request.body.serverUnixDate) {
+        response.send({ offsetUnixDate: serverClock.offsetDate(request.body.serverUnixDate) });
     }
     else {
         response.sendStatus(200);
     }
 });
 app.post("/setServerHourOffset", function (request, response) {
-    console.log(request.body);
     if (request.body.timeDifference) {
+        console.log("server hour then: ", serverClock.date);
+        console.log(request.body.timeDifference);
+        serverClock.date = new Date(serverClock.date.valueOf() - request.body.timeDifference);
+        console.log("server hour now: ", serverClock.date);
         io.sockets.emit("serverHourChanged", request.body.timeDifference);
     }
     response.sendStatus(200);
@@ -44,8 +46,9 @@ io.on("connection", function (socket) {
         socket.emit("serverDate", date);
     };
     socket.on("changeServerHour", function (dateString) {
-        Logger_1.logger.info("Client send a new date for the server.");
+        Logger_1.logger.info("Client sended a new date for the server.");
         serverClock.date = new Date(dateString);
+        console.log("New date for the server: ", serverClock.date);
     });
 });
 httpServer.listen(ConnectionConstants_1.Server.port, "0.0.0.0", function () {

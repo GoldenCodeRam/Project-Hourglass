@@ -40,18 +40,21 @@ export default class ServerManager {
 
     for (const information of this.serverInformationList) {
       const response = await axios.post(`http://localhost:${information.serverPort}/offsetServerHour/`, {
-        serverDate: this._serverClock.date,
+        serverUnixDate: this._serverClock.date.valueOf(),
       });
       if (response.data) {
-        totalTimeDifference += response.data.offsetDate;
-        serverOffsets.push(response.data.offsetDate);
+        console.log("Current offset of the server: ", response.data);
+        totalTimeDifference += response.data.offsetUnixDate;
+        serverOffsets.push(response.data.offsetUnixDate);
       }
     }
 
     averageTimeDifference = totalTimeDifference / (this.serverInformationList.length + 1);
+    console.log("Average time difference of the clocks: ", averageTimeDifference);
 
     for (const information of this.serverInformationList) {
       const timeDifference = averageTimeDifference - serverOffsets[this.serverInformationList.indexOf(information)];
+      console.log("Time difference to add or remove to the clock server: ", timeDifference);
       await axios.post(`http://localhost:${information.serverPort}/setServerHourOffset/`, {
         timeDifference: timeDifference,
       });
