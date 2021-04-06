@@ -44,7 +44,7 @@ The coordinator will handle the information of the status of the servers. The co
 * [x] Send the new hour to all of the connected servers.
 
 ### Polish ✨
-* [ ] Add a [Swagger 🔗](https://swagger.io/) HTTP API Document page.
+* [x] Add a [Swagger 🔗](https://swagger.io/) HTTP API Document page.
 * [ ] Add an [Asyncapi 🔗](https://www.asyncapi.com/) Websocket API Document page.
 
 ## Diagrams
